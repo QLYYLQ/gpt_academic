@@ -15,13 +15,13 @@ API_KEY = "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,sk-tCZ8gBJYJgMjD9
 USE_PROXY = True
 if USE_PROXY:
     """
+    代理网络的地址，打开你的代理软件查看代理协议(socks5h / http)、地址(localhost)和端口(11284)
     填写格式是 [协议]://  [地址] :[端口]，填写之前不要忘记把USE_PROXY改成True，如果直接在海外服务器部署，此处不修改
             <配置教程&视频教程> https://github.com/binary-husky/gpt_academic/issues/1>
     [协议] 常见协议无非socks5h/http; 例如 v2**y 和 ss* 的默认本地协议是socks5h; 而cl**h 的默认本地协议是http
-    [地址] 懂的都懂，不懂就填localhost或者127.0.0.1肯定错不了（localhost意思是代理软件安装在本机上）
+    [地址] 填localhost或者127.0.0.1（localhost意思是代理软件安装在本机上）
     [端口] 在代理软件的设置里找。虽然不同的代理软件界面不一样，但端口号都应该在最显眼的位置上
     """
-    # 代理网络的地址，打开你的*学*网软件查看代理的协议(socks5h / http)、地址(localhost)和端口(11284)
     proxies = {
         #          [协议]://  [地址]  :[端口]
         "http":  "http://127.0.0.1:7890",  # 再例如  "http":  "http://127.0.0.1:7890",
@@ -86,18 +86,31 @@ DEFAULT_FN_GROUPS = ['对话', '编程', '学术', '智能体']
 
 
 # 模型选择是 (注意: LLM_MODEL是默认选中的模型, 它*必须*被包含在AVAIL_LLM_MODELS列表中 )
-LLM_MODEL = "gpt-3.5-turbo" # 可选 ↓↓↓
-AVAIL_LLM_MODELS = ["gpt-3.5-turbo-1106","gpt-4-1106-preview","gpt-4-vision-preview",
-                    "gpt-3.5-turbo-16k", "gpt-3.5-turbo", "azure-gpt-3.5",
-                    "api2d-gpt-3.5-turbo", 'api2d-gpt-3.5-turbo-16k',
+LLM_MODEL = "gpt-3.5-turbo-16k" # 可选 ↓↓↓
+AVAIL_LLM_MODELS = ["gpt-4-1106-preview", "gpt-4-turbo-preview", "gpt-4-vision-preview",
+                    "gpt-3.5-turbo-1106", "gpt-3.5-turbo-16k", "gpt-3.5-turbo", "azure-gpt-3.5",
                     "gpt-4", "gpt-4-32k", "azure-gpt-4", "api2d-gpt-4",
-                    "chatglm3", "moss", "claude-2"]
-# P.S. 其他可用的模型还包括 ["zhipuai", "qianfan", "deepseekcoder", "llama2", "qwen", "gpt-3.5-turbo-0613", "gpt-3.5-turbo-16k-0613",  "gpt-3.5-random"
-# "spark", "sparkv2", "sparkv3", "chatglm_onnx", "claude-1-100k", "claude-2", "internlm", "jittorllms_pangualpha", "jittorllms_llama"]
+                    "gemini-pro", "chatglm3", "claude-2", "zhipuai"]
+# P.S. 其他可用的模型还包括 [
+# "moss", "qwen-turbo", "qwen-plus", "qwen-max"
+# "zhipuai", "qianfan", "deepseekcoder", "llama2", "qwen-local", "gpt-3.5-turbo-0613", 
+# "gpt-3.5-turbo-16k-0613",  "gpt-3.5-random", "api2d-gpt-3.5-turbo", 'api2d-gpt-3.5-turbo-16k',
+# "spark", "sparkv2", "sparkv3", "chatglm_onnx", "claude-1-100k", "claude-2", "internlm", "jittorllms_pangualpha", "jittorllms_llama"
+# ]
 
 
 # 定义界面上“询问多个GPT模型”插件应该使用哪些模型，请从AVAIL_LLM_MODELS中选择，并在不同模型之间用`&`间隔，例如"gpt-3.5-turbo&chatglm3&azure-gpt-4"
 MULTI_QUERY_LLM_MODELS = "gpt-3.5-turbo&chatglm3"
+
+
+# 选择本地模型变体（只有当AVAIL_LLM_MODELS包含了对应本地模型时，才会起作用）
+# 如果你选择Qwen系列的模型，那么请在下面的QWEN_MODEL_SELECTION中指定具体的模型
+# 也可以是具体的模型路径
+QWEN_LOCAL_MODEL_SELECTION = "Qwen/Qwen-1_8B-Chat-Int8"
+
+
+# 接入通义千问在线大模型 https://dashscope.console.aliyun.com/
+DASHSCOPE_API_KEY = "" # 阿里灵积云API_KEY
 
 
 # 百度千帆（LLM_MODEL="qianfan"）
@@ -113,7 +126,6 @@ CHATGLM_PTUNING_CHECKPOINT = "" # 例如"/home/hmp/ChatGLM2-6B/ptuning/output/6b
 # 本地LLM模型如ChatGLM的执行方式 CPU/GPU
 LOCAL_MODEL_DEVICE = "cpu" # 可选 "cuda"
 LOCAL_MODEL_QUANT = "FP16" # 默认 "FP16" "INT4" 启用量化INT4版本 "INT8" 启用量化INT8版本
-
 
 # 设置gradio的并行线程数（不需要修改）
 CONCURRENT_COUNT = 100
@@ -183,7 +195,13 @@ XFYUN_API_KEY = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
 # 接入智谱大模型
 ZHIPUAI_API_KEY = ""
-ZHIPUAI_MODEL = "chatglm_turbo"
+ZHIPUAI_MODEL = "glm-4" # 可选 "glm-3-turbo" "glm-4"
+
+
+# # 火山引擎YUNQUE大模型
+# YUNQUE_SECRET_KEY = ""
+# YUNQUE_ACCESS_KEY = ""
+# YUNQUE_MODEL = ""
 
 
 # Claude API KEY
@@ -192,6 +210,10 @@ ANTHROPIC_API_KEY = ""
 
 # 自定义API KEY格式
 CUSTOM_API_KEY_PATTERN = ""
+
+
+# Google Gemini API-Key
+GEMINI_API_KEY = ''
 
 
 # HUGGINGFACE的TOKEN，下载LLAMA时起作用 https://huggingface.co/docs/hub/security-tokens
@@ -230,6 +252,10 @@ WHEN_TO_USE_PROXY = ["Download_LLM", "Download_Gradio_Theme", "Connect_Grobid",
 
 # *实验性功能*: 自动检测并屏蔽失效的KEY，请勿使用
 BLOCK_INVALID_APIKEY = False
+
+
+# 启用插件热加载
+PLUGIN_HOT_RELOAD = False
 
 
 # 自定义按钮的最大数量限制
@@ -275,6 +301,12 @@ NUM_CUSTOM_BASIC_BTN = 4
 │   ├── ZHIPUAI_API_KEY
 │   └── ZHIPUAI_MODEL
 │
+├── "qwen-turbo" 等通义千问大模型
+│   └──  DASHSCOPE_API_KEY
+│
+├── "Gemini"
+│   └──  GEMINI_API_KEY
+│
 └── "newbing" Newbing接口不再稳定，不推荐使用
     ├── NEWBING_STYLE
     └── NEWBING_COOKIES
@@ -291,7 +323,7 @@ NUM_CUSTOM_BASIC_BTN = 4
 ├── "jittorllms_pangualpha"
 ├── "jittorllms_llama"
 ├── "deepseekcoder"
-├── "qwen"
+├── "qwen-local"
 ├──  RWKV的支持见Wiki
 └── "llama2"
 
